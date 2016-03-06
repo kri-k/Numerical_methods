@@ -130,6 +130,20 @@ class Matrix:
         for i, row in enumerate(self.mtrx):
             row += col[i]
 
+    def transpose(self):
+        t_m = Matrix((self.size[1], self.size[0]))
+        for i in range(self.size[0]):
+            for j in range(self.size[1]):
+                t_m[j][i] = self.mtrx[i][j]
+        return t_m
+
+    def scalar_product(self, vec):
+        sc_pr = 0
+        for i in range(self.size[0]):
+            sc_pr += self.mtrx[i][0] * vec[i][0]
+        return sc_pr
+        
+
     @staticmethod
     def identity(size):
         e = Matrix(size)
