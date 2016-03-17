@@ -1,4 +1,4 @@
-from math import fabs, fsum
+from math import fabs, fsum, sqrt
 import copy
 
 
@@ -74,7 +74,7 @@ class Matrix:
                     res.mtrx[i][j] += self.mtrx[i][k] * other.mtrx[k][j]
         return res
 
-    def norm(self):
+    def norm_inf(self):
         if self.size[0] == 0 or self.size[1] == 0:
             raise ValueError("wrong size: {}x{}".format(*self.size))
         norm = fsum(map(fabs, self.mtrx[0]))
@@ -83,6 +83,12 @@ class Matrix:
             if sum > norm:
                 norm = sum
         return norm
+
+    def norm_2(self):
+        sum_pow_2 = 0
+        for row in self.mtrx:
+            sum_pow_2 += fsum(map(lambda x: x**2, row))
+        return sqrt(sum_pow_2)
 
     def __getitem__(self, row):
         return self.mtrx[row]

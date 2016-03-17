@@ -15,16 +15,16 @@ class SeidelMethod(IterativeMethod):
 
     @staticmethod
     def __get_precision_func(mtrx):
-        m = mtrx.norm()
+        m = mtrx.norm_inf()
         if m > 1:
-            c = SeidelMethod.__get_upper_triangular_matrix(mtrx).norm()
+            c = SeidelMethod.__get_upper_triangular_matrix(mtrx).norm_inf()
 
             def f(prev_vec, cur_vec):
-                n = (cur_vec - prev_vec).norm()
+                n = (cur_vec - prev_vec).norm_inf()
                 return c * n / (1 - m)
         else:
             def f(prev_vec, cur_vec):
-                n = (cur_vec - prev_vec).norm()
+                n = (cur_vec - prev_vec).norm_inf()
                 return n
         return f
 
