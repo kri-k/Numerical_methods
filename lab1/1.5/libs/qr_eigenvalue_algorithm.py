@@ -2,6 +2,8 @@ import sys
 import os.path
 import math
 import cmath
+import random
+from libs.gauss_method import GaussMethod
 
 my_libs_path = os.path.normpath(os.path.join(sys.path[0], "../"))
 sys.path.append(my_libs_path)
@@ -18,6 +20,7 @@ class QREigenvalueAlgorithm:
     def __init__(self, mtrx):
         self.mtrx = mtrx.copy()
         self.__need_logging = False
+        self.__need_steps = False
 
     def set(self, mtrx):
         self.mtrx = mtrx.copy()
@@ -28,6 +31,11 @@ class QREigenvalueAlgorithm:
 
     def log(self, flag):
         self.__need_logging = flag
+
+    def step_by_step(self, flag):
+        if not self.__need_logging:
+            self.__need_logging = flag
+        self.__need_steps = flag
 
     @staticmethod
     def get_householder_transform(mtrx, col):
@@ -82,6 +90,8 @@ class QREigenvalueAlgorithm:
         need_delete = []
         eigenvalues = [None] * n
         while len(not_found) > 0:
+            if self.__need_steps:
+                input("=====Enter for next step=====")
             iter_count += 1
             q, r = QREigenvalueAlgorithm.QR_decomposition(a_k)
             a_k = r * q
@@ -112,7 +122,7 @@ class QREigenvalueAlgorithm:
                         print("Add l{} = {} as real eigenvalue".format(col, eigenvalues[col]))
 
                 else:  # complex number
-                    max = QREigenvalueAlgorithm.max_abs_in_col(a_k, col + 1, col + 2)
+                    max = QREigenvalueAlgorithm.max_abs_in_col(a_k, col + 1, first_row=col + 2)
                     if max > precision or math.fabs(a_k[col + 1][col + 1]) < precision:
                         continue
                     j = col
@@ -120,10 +130,19 @@ class QREigenvalueAlgorithm:
                                                                             -a_k[j][j] - a_k[j + 1][j + 1],
                                                                             a_k[j][j] * a_k[j + 1][j + 1],
                                                                             a_k[j][j + 1] * a_k[j + 1][j])
-                    if eigenvalues[j] is not None and abs(x1 - eigenvalues[j]) < precision:
-                        need_delete += [col, col + 1] if col < n-2 else [col]
+
+                    if eigenvalues[j] is not None and \
+                       eigenvalues[j+1] is not None and \
+                       abs(x1 - eigenvalues[j]) < precision and \
+                       abs(x2 - eigenvalues[j+1]) < precision:
+                        if col in not_found and col + 1 in not_found:
+                            need_delete += [col, col + 1] if col < n-2 else [col]
+                        elif col in not_found:
+                            need_delete += [col]
+                        elif col + 1 in not_found and col < n-2:
+                            need_delete += [col + 1]
                         if self.need_logging:
-                            print("Add  l{} = {}, l{} = {} as complex eigenvalues\n".format(col, col+1, x1, x2))
+                            print("Add l{} = {}, l{} = {} as complex eigenvalues\n".format(col, x1, col+1, x2))
                     elif self.need_logging:
                         if eigenvalues[j] is None:
                             print("First found complex eigenvalues l{} = {}, l{} = {}\n".format(col, x1, col+1, x2))
@@ -142,16 +161,46 @@ class QREigenvalueAlgorithm:
         if self.need_logging:
             print("Number of iterations =", iter_count)
 
-        return eigenvalues
+        return self.__remove_null_imag(eigenvalues)
+
+    @staticmethod
+    def __remove_null_imag(lst):
+        def f(x):
+            if type(x) is complex and x.imag == 0:
+                return x.real
+            return x
+        return list(map(f, lst))
+
+    def __find_eigenvector(self, eig_val, prec, relax_coef):
+        is_complex = type(eig_val) is complex
+        e_lam = Matrix.identity(self.mtrx.size)
+        e_lam *= eig_val
+        a = GaussMethod.get_inverse_matrix(self.mtrx - e_lam)
+        x_prev = Matrix((self.mtrx.size[0], 1))
+        if is_complex:
+            x_prev.fill(*[complex(random.randint(1, 100), random.randint(1, 100)) for _ in range(x_prev.size[0])])
+        else:
+            x_prev.fill(*[random.randint(1, 100) for _ in range(x_prev.size[0])])
+        x_cur = (a * x_prev).normalize()
+        # method does not always converge,
+        # so use successive over-relaxation (SOR) method
+        relax_coef *= 0.1
+        while (x_cur - x_prev).norm_inf() > prec:
+            x_prev = x_cur
+            x_cur = (a * x_prev)
+            x_cur *= relax_coef
+            tmp_x = x_prev.copy()
+            tmp_x *= 1 - relax_coef
+            x_cur = x_cur + tmp_x
+            x_cur = x_cur.normalize()
+        return x_cur
+
+    def find_eigenvectors(self, eig_vals, precision, relax_coef):
+        vals_vectors = []
+        for lam in eig_vals:
+            vals_vectors.append((lam, self.__find_eigenvector(lam, precision, relax_coef)))
+        return vals_vectors
 
 
 if __name__ == "__main__":
     pass
-    # a22 = 2.67
-    # a33 = -2.59
-    # a23 = 6.58
-    # a32 = 2.79
-    # print(QREigenvalueAlgorithm.solve_quadratic_equation(1,
-    #                                                      -a22-a33,
-    #                                                      a22*a33,
-    #                                                      a23*a32))

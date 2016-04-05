@@ -1,4 +1,5 @@
-from math import fabs, fsum, sqrt
+from math import sqrt
+from cmath import sqrt as csqrt
 import copy
 
 
@@ -77,18 +78,25 @@ class Matrix:
     def norm_inf(self):
         if self.size[0] == 0 or self.size[1] == 0:
             raise ValueError("wrong size: {}x{}".format(*self.size))
-        norm = fsum(map(fabs, self.mtrx[0]))
+        norm = sum(map(abs, self.mtrx[0]))
         for i in range(1, len(self.mtrx)):
-            sum = fsum(map(fabs, self.mtrx[i]))
-            if sum > norm:
-                norm = sum
+            sum_row = sum(map(abs, self.mtrx[i]))
+            if sum_row > norm:
+                norm = sum_row
         return norm
 
     def norm_2(self):
         sum_pow_2 = 0
         for row in self.mtrx:
-            sum_pow_2 += fsum(map(lambda x: x**2, row))
-        return sqrt(sum_pow_2)
+            sum_pow_2 += sum(map(lambda x: x**2, row))
+        return sqrt(sum_pow_2) if type(sum_pow_2) is not complex else csqrt(sum_pow_2)
+
+    def normalize(self):
+        n = self.norm_2()
+        for i in range(self.size[0]):
+            for j in range(self.size[1]):
+                self.mtrx[i][j] /= n
+        return self
 
     def __getitem__(self, row):
         return self.mtrx[row]
@@ -149,7 +157,6 @@ class Matrix:
             sc_pr += self.mtrx[i][0] * vec[i][0]
         return sc_pr
         
-
     @staticmethod
     def identity(size):
         e = Matrix(size)
