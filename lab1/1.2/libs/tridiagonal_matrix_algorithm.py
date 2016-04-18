@@ -9,7 +9,7 @@ from matrix import Matrix
 
 class TDMA:
     def __init__(self, mtrx=Matrix((1, 1)), vec=Matrix((1, 1))):
-        if mtrx.size[0] == 3:
+        if mtrx.size[1] == 3:
             self.__mtrx = mtrx.copy()
             self.__mtrx[0][0] = 0
             self.__mtrx[self.__mtrx.size[0]-1][-1] = 0
