@@ -8,6 +8,7 @@ def setup_argparse():
                                      'Find and plot the interpolating cubic spline')
     # parser.add_argument('-v', '--verbose', action='store_true', help='increase output verbosity')
     parser.add_argument('-p', '--plot', action='store_true', help='plot spline using matplotlib')
+    parser.add_argument('-c', '--cubic', action='store_true', help='additionally show cubic spline')
     parser.add_argument(dest='points_file', action='store', help='file with points to interpolate')
     parser.add_argument("-s", "--step", action="store", default="100", metavar="value",
                         type=int,
@@ -40,6 +41,7 @@ if __name__ == "__main__":
     py_find = [spl(x) for x in px_find]
     for i, x in enumerate(px_find):
         print(x, py_find[i])
+
     if args.plot:
         try:
             import matplotlib.pyplot as plt
@@ -47,6 +49,10 @@ if __name__ == "__main__":
             print("Can't import matplotlib :'''(")
             print(e)
             sys.exit(1)
+        plt.xlabel('x')
+        plt.ylabel('y')
+        plt.title('Interpolating exponential spline for "{}"'.format(args.points_file))
+        plt.grid(True)
         step_num = args.step
         step = abs(px[-1] - px[0]) / step_num
         x = [px[0]]
@@ -56,10 +62,20 @@ if __name__ == "__main__":
             y.append(spl(x[-1]))
         x.append(px[-1])
         y.append(spl(x[-1]))
-        plt.xlabel('x')
-        plt.ylabel('y')
-        plt.title('Interpolating exponential spline for "{}"'.format(args.points_file))
-        plt.grid(True)
-        plt.plot(px, py, 'bo', x, y, '')
+        plt.plot(px, py, 'bo')
+        plt.plot(x, y, label='exponential spline')
         plt.plot(px_find, py_find, 'ro')
+
+        if args.cubic:
+            c_spl = ExpSpline(*zip(px, py))
+            c_spl.set_cubic()
+            x = [px[0]]
+            y = [c_spl(x[0])]
+            for i in range(1, step_num):
+                x.append(x[i-1] + step)
+                y.append(c_spl(x[-1]))
+            x.append(px[-1])
+            y.append(c_spl(x[-1]))
+            plt.plot(x, y, label='cubic spline')
+        plt.legend()
         plt.show()

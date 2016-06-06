@@ -11,15 +11,28 @@ def dpr(*args, **kwargs):
 
 class ExpSpline:
     def __init__(self, *points):
+        self.cubic = False
         self.points = list(points)
-        self.tension_parameters = [0.0001 for _ in range(len(points) - 1)]
+        self.tension_parameters = None
+
+        self.__set_clear_tension_parameters()
 
         self.h = self.__get_interval_dists(points)
-        self.left_border_derivative = 0
-        self.right_border_derivative = 0
+        self.left_border_derivative = (points[1][1] - points[0][1]) / (points[1][0] - points[0][0])
+        self.right_border_derivative = (points[-1][1] - points[-2][1]) / (points[-1][0] - points[-2][0])
+        # self.left_border_derivative = 0
+        # self.right_border_derivative = 0
 
         self.__set_tension_parameters()
         self.coefficients = self.__get_coefficients()
+
+    def set_cubic(self, flag=True):
+        self.cubic = flag
+        self.__set_clear_tension_parameters()
+        self.coefficients = self.__get_coefficients()
+
+    def __set_clear_tension_parameters(self):
+        self.tension_parameters = [1e-5 for _ in range(len(self.points) - 1)]
 
     def add_points(self, *points):
         self.points += points
@@ -97,7 +110,7 @@ class ExpSpline:
         return max(abs(lam * self.h[i]) ** -0.5, self.tension_parameters[i])
 
     def __set_tension_parameters(self):
-        relax_coef = 0.01
+        relax_coef = 1e-2
         max_delta = 20
         max_iter_num = max_delta // relax_coef
 
@@ -108,15 +121,16 @@ class ExpSpline:
         dpr('===================')
         dpr('b =', ' '.join(map(lambda x: str(x)[:7] if x >= 0 else str(x)[:8], b)))
         dpr("t'' =", ' '.join(map(lambda x: str(x)[:7] if x >= 0 else str(x)[:8], coef)))
+        dpr('p =', ' '.join(map(lambda x: str(x)[:7] if x >= 0 else str(x)[:8], self.tension_parameters)))
 
-        for i in range(0, len(coef)):
+        for i in range(len(coef)):
             dpr('===================')
             dpr(i)
             dpr('b =', ' '.join(map(lambda x: str(x)[:7] if x >= 0 else str(x)[:8], b)))
             dpr("t'' =", ' '.join(map(lambda x: str(x)[:7] if x >= 0 else str(x)[:8], coef)))
 
             s = 0
-            if b[i] * b[i-1] <= 0:
+            if i > 0 and b[i] * b[i-1] <= 0:
                 dpr('\tb[{}] * b[{}] = {} <= 0: CONTINUE'.format(i, i-1, b[i] * b[i-1]))
                 continue
 
@@ -124,20 +138,24 @@ class ExpSpline:
                 dpr("\tt''[{0}] * b[{0}] = {1} < 0: ITERATE".format(i, coef[i] * b[i]))
 
             while coef[i] * b[i] < 0:
-                # break
+                if self.cubic:
+                    break
                 s += 1
 
                 lam = self.__lam(i, coef)
-                self.tension_parameters[i - 1] += \
-                    relax_coef * (self.__ph(i - 1, lam) - self.tension_parameters[i - 1])
-                self.tension_parameters[i] += \
-                    relax_coef * (self.__ph(i, lam) - self.tension_parameters[i])
+                if i > 0:
+                    self.tension_parameters[i - 1] += \
+                        relax_coef * (self.__ph(i - 1, lam) - self.tension_parameters[i - 1])
+                if i < len(coef) - 1:
+                    self.tension_parameters[i] += \
+                        relax_coef * (self.__ph(i, lam) - self.tension_parameters[i])
 
                 coef = self.__get_coefficients()
                 if s > max_iter_num:
                     dpr('OVERDOZE!!!')
                     break
 
+            dpr('p =', ' '.join(map(lambda x: str(x)[:7] if x >= 0 else str(x)[:8], self.tension_parameters)))
             dpr("\t\tt''[{0}] * b[{0}] = {1} >= 0: {2}".format(i, coef[i] * b[i], coef[i] * b[i] >= 0))
         dpr('p = ', ' '.join(map(lambda x: str(x)[:7] if x >= 0 else str(x)[:8], self.tension_parameters)))
 
