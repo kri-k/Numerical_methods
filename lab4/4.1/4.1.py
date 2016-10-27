@@ -1,6 +1,6 @@
 import math
 import matplotlib.pyplot as plt
-from libs.сauchy_problem import CauchyProblem
+from libs.cauchy_problem import CauchyProblem
 
 
 def test():
