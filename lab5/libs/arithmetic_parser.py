@@ -1,37 +1,52 @@
-import re
+import sympy
+from sympy.parsing.sympy_parser import parse_expr
 
 
 class FunctionFromStr:
-    # use exec and regexp coz it's easier =)
-    # may be should convert to postfix notation
-    def __init__(self, s):
-        self.valid = FunctionFromStr.validate(s)
-        self.s_func = s if self.valid else ''
+    def __init__(self, s=None):
         self.args = []
-
-    @staticmethod
-    def validate(s):
-        # available_funcs = '|'.join(['sin', 'cos', 'exp'])
-        # available_ops = '|'.join(['\+', '-', '\*', '\/', '\^'])
-        # func_pat = '(({0})\(\w+\))'.format(available_funcs)
-        # func_var_const_pat = '({0}|\w+)'.format(func_pat)
-        # pat = '^({0}\s*{1}\s*)*{0}$'.format(func_var_const_pat, available_ops)
-        # pat = re.compile(pat)
-        # return pat.match(s) is not None
-        return True
+        self.valid = False
+        self.expr = None
+        self.str_expr = ''
+        self.str_expr_compiled = None
+        self.global_env = dict()
+        exec('from math import *', None, self.global_env)
+        if s is None:
+            return
+        try:
+            self.expr = parse_expr(s)
+            self.str_expr_compiled = compile('result=({})'.format(s), '', 'exec')
+        except SyntaxError:
+            return
+        self.str_expr = s
+        self.valid = True
 
     def set_args_name(self, *args):
         self.args = args
 
     def __call__(self, *args, **kwargs):
-        s = '''
-from math import *
-answer = ({})'''.format(self.s_func)
-        for i in range(min(len(self.args), len(args))):
-            kwargs[self.args[i]] = args[i]
+        if not self.valid:
+            return None
+        if len(self.args) != len(args):
+            if len(self.args) > len(args):
+                err = 'missing {} required positional argument: '.format(len(self.args) - len(args))
+                err += ', '.join(self.args[len(args):])
+            else:
+                err = 'function takes {0} positional arguments but {1} were given'.format(len(self.args), len(args))
+            raise TypeError(err)
         try:
-            exec(s, None, kwargs)
-        except (SyntaxError, NameError) as e:
+            for i in range(len(args)):
+                kwargs[self.args[i]] = args[i]
+            exec(self.str_expr_compiled, self.global_env, kwargs)
+            return kwargs['result']
+        except (TypeError, NameError):
             self.valid = False
             return None
-        return kwargs['answer']
+
+    def get_derivative(self, *args):
+        res_func = FunctionFromStr(str(sympy.diff(self.expr, *args)))
+        res_func.set_args_name(*self.args)
+        return res_func
+
+if __name__ == '__main__':
+    pass
