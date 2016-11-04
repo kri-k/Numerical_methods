@@ -50,7 +50,7 @@ class MatplotCanvasWidget(FigureCanvas):
         self.l.append(label)
 
     def plot(self):
-        self.axes.legend(self.h, self.l, prop={'size': 6}, bbox_to_anchor=(0.2, 1.02, 1., .102), loc=3, ncol=3,
+        self.axes.legend(self.h, self.l, prop={'size': 6}, bbox_to_anchor=(0.2, 1.00, 1., .102), loc=3, ncol=3,
                          borderaxespad=0.)
         # self.axes.legend(h, l, prop={'size': 6})
         self.draw()

@@ -1,5 +1,5 @@
-from libs.matrix import Matrix
-from libs.matrix import Vector
+from common.matrix import Matrix
+from common.matrix import Vector
 
 
 class TDMA:
