@@ -1,5 +1,3 @@
-
-
 def explicit_fd(main_args,
                 boundary_left_args, boundary_right_args,
                 initial_func,
@@ -25,16 +23,16 @@ def explicit_fd(main_args,
         u[0][x] = initial_func(min_x + x * step_x)
 
     a, b, c, f = main_args
-    coef_1 = a * step_t / step_x**2
+    coef_1 = a * step_t / step_x ** 2
     coef_2 = b * step_t / (2 * step_x)
     for t in range(1, m):
-        for x in range(1, n-1):
-            u[t][x] = (u[t-1][x+1] * (coef_1 + coef_2) +
-                       u[t-1][x] * (1 - 2 * coef_1 + c * step_t) +
-                       u[t-1][x-1] * (coef_1 - coef_2) +
+        for x in range(1, n - 1):
+            u[t][x] = (u[t - 1][x + 1] * (coef_1 + coef_2) +
+                       u[t - 1][x] * (1 - 2 * coef_1 + c * step_t) +
+                       u[t - 1][x - 1] * (coef_1 - coef_2) +
                        f(min_x + x * step_x, (t - 1) * step_t) * step_t)
-        u[t][0] = f0(t * step_t, u[t][1], u[t][2], u[t-1][0])
-        u[t][n-1] = f1(t * step_t, u[t][n-2], u[t][n-3], u[t-1][n-1])
+        u[t][0] = f0(t * step_t, u[t][1], u[t][2], u[t - 1][0])
+        u[t][n - 1] = f1(t * step_t, u[t][n - 2], u[t][n - 3], u[t - 1][n - 1])
     return u
 
 
@@ -62,16 +60,16 @@ def _o2p2(main_args, boundary_left_args, boundary_right_args, step_x, step_t, mi
         t, u_1, _, u_0_prev_t = args[:4]
         a2 = 2 * a
         y = 1 + b * step_x / a2
-        tmp = a2 * step_x * y * phi_0(t) - a2 * alpha * u_1 - alpha * step_x**2 * (u_0_prev_t / step_t + f(min_x, t))
-        tmp /= alpha * step_x**2 * (c * step_t - 1) / step_t + a2 * (step_x * beta * y - alpha)
+        tmp = a2 * step_x * y * phi_0(t) - a2 * alpha * u_1 - alpha * step_x ** 2 * (u_0_prev_t / step_t + f(min_x, t))
+        tmp /= alpha * step_x ** 2 * (c * step_t - 1) / step_t + a2 * (step_x * beta * y - alpha)
         return tmp
 
     def f_1(*args):
         t, u_n1, _, u_n_prev_t = args[:4]
         a2 = 2 * a
         y = 1 + b * step_x / a2
-        tmp = phi_1(t) + gamma * (a2 * u_n1 + step_x**2 * (u_n_prev_t / step_t + f(max_x, t)))
-        tmp /= gamma * (a2 + step_x**2 / step_t - c * step_x**2) + delta
+        tmp = phi_1(t) + gamma * (a2 * u_n1 + step_x ** 2 * (u_n_prev_t / step_t + f(max_x, t)))
+        tmp /= gamma * (a2 + step_x ** 2 / step_t - c * step_x ** 2) + delta
         return tmp
 
     return f_0, f_1

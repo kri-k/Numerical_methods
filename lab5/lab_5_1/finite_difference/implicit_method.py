@@ -1,6 +1,6 @@
-from libs.matrix import Matrix
-from libs.matrix import Vector
-from libs.tridiagonal_matrix_algorithm import TDMA
+from common.matrix import Matrix
+from common.matrix import Vector
+from common.tridiagonal_matrix_algorithm import TDMA
 
 
 def implicit_fd(main_args,

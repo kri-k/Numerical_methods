@@ -2,8 +2,8 @@ from PySide import QtGui
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-import libs.widget_control
-from libs.arithmetic_parser import FunctionFromStr
+import common.widget_control
+from common.arithmetic_parser import FunctionFromStr
 from lab_5_1.parabolic_pde import ParabolicPDE
 
 
@@ -11,7 +11,7 @@ class MainWindow(QtGui.QMainWindow):
     def __init__(self, parent):
         super().__init__(parent)
         self.setWindowTitle('Параболические уравнения')
-        w = libs.widget_control.get_widget_from_ui(path='./lab_5_1/gui/ui_forms/main_window.ui')
+        w = common.widget_control.get_widget_from_ui(path='./lab_5_1/gui/ui_forms/main_window.ui')
         self.setCentralWidget(w)
 
         self.main_args = None
@@ -42,12 +42,12 @@ class MainWindow(QtGui.QMainWindow):
         self.set_pixmaps()
         self.set_widgets_connections()
 
-        self.canvas_solution = libs.widget_control.MatplotCanvasWidget()
+        self.canvas_solution = common.widget_control.MatplotCanvasWidget()
         self.toolbar_solution = NavigationToolbar(self.canvas_solution, self)
         w.verticalLayout_plot_solution.addWidget(self.toolbar_solution)
         w.verticalLayout_plot_solution.addWidget(self.canvas_solution)
 
-        self.canvas_error = libs.widget_control.MatplotCanvasWidget()
+        self.canvas_error = common.widget_control.MatplotCanvasWidget()
         self.toolbar_error = NavigationToolbar(self.canvas_error, self)
         w.verticalLayout_plot_error.addWidget(self.toolbar_error)
         w.verticalLayout_plot_error.addWidget(self.canvas_error)
@@ -77,21 +77,42 @@ class MainWindow(QtGui.QMainWindow):
 
         w.tabWidget.currentChanged.connect(self.update_tab_page)
 
-        # checkbox_widgets = [w.checkBox_explicit, w.checkBox_implicit, w.checkBox_crank_nicolson,
-        #                     w.checkBox_o1p2, w.checkBox_o2p2, w.checkBox_o2p3, w.checkBox_show_analytic]
-
-        def f():
+        def state_changed_sol_err():
             self.update_canvas_solution()
             self.update_canvas_error()
 
         checkbox_widgets = self.scheme_check_box + self.app_order_check_box
         for x in checkbox_widgets:
-            x.stateChanged.connect(f)
+            x.stateChanged.connect(state_changed_sol_err)
 
         w.checkBox_show_analytic.stateChanged.connect(self.update_canvas_solution)
         w.spinBox_stept.valueChanged.connect(self.update_canvas_solution)
 
         w.lineEdit_analytic_solution.returnPressed.connect(self.update_analytic_solution)
+
+        def value_changed_step_x():
+            l1 = w.doubleSpinBox_l1.value()
+            l2 = w.doubleSpinBox_l2.value()
+            n = w.spinBox_nx.value()
+            if l2 - l1 > 0 and n > 0:
+                w.label_stepx.setText(str((l2 - l1) / n)[:10])
+            else:
+                w.label_stepx.setText('Error')
+
+        w.doubleSpinBox_l1.valueChanged.connect(value_changed_step_x)
+        w.doubleSpinBox_l2.valueChanged.connect(value_changed_step_x)
+        w.spinBox_nx.valueChanged.connect(value_changed_step_x)
+
+        def value_changed_step_t():
+            T = w.doubleSpinBox_T.value()
+            n = w.spinBox_nt.value()
+            if T > 0 and n > 0:
+                w.label_stepx.setText(str(T / n)[:10])
+            else:
+                w.label_stepx.setText('Error')
+
+        w.doubleSpinBox_T.valueChanged.connect(value_changed_step_t)
+        w.spinBox_nt.valueChanged.connect(value_changed_step_t)
 
     def update_analytic_solution(self):
         self.analytic_func = FunctionFromStr(self.centralWidget().lineEdit_analytic_solution.text())
@@ -218,7 +239,6 @@ class MainWindow(QtGui.QMainWindow):
         self.errors_analytic_numeric = [[None] * len(self.app_order_names) for _ in range(len(self.scheme_names))]
         a = self.analytic_solution
         for i in range(len(self.scheme_names)):
-            self.errors_analytic_numeric.append([])
             for j in range(len(self.app_order_names)):
                 self.errors_analytic_numeric[i][j] = [max(map(lambda x, y: abs(x - y), a[k], self.solutions[i][j][k]))
                                                       for k in range(len(a))]
