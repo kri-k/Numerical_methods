@@ -36,7 +36,7 @@ class MainWindow(QtGui.QMainWindow):
         self.scheme_check_box = [w.checkBox_explicit, w.checkBox_implicit, w.checkBox_crank_nicolson]
 
         self.app_order_names = ['first_order_two_points', 'second_order_two_points', 'second_order_three_points']
-        self.app_order_labels = ['1 order 2 points', '2 order 2 points', '2 order 3 points']
+        self.app_order_labels = ['1o2p', '2o2p', '2o3p']
         self.app_order_check_box = [w.checkBox_o1p2, w.checkBox_o2p2, w.checkBox_o2p3]
 
         self.set_pixmaps()
@@ -107,9 +107,9 @@ class MainWindow(QtGui.QMainWindow):
             T = w.doubleSpinBox_T.value()
             n = w.spinBox_nt.value()
             if T > 0 and n > 0:
-                w.label_stepx.setText(str(T / n)[:10])
+                w.label_stept.setText(str(T / n)[:10])
             else:
-                w.label_stepx.setText('Error')
+                w.label_stept.setText('Error')
 
         w.doubleSpinBox_T.valueChanged.connect(value_changed_step_t)
         w.spinBox_nt.valueChanged.connect(value_changed_step_t)
@@ -255,7 +255,7 @@ class MainWindow(QtGui.QMainWindow):
                 continue
             for j, a in enumerate(app_order):
                 if a[0].isChecked():
-                    self.canvas_error.add(t, self.errors_analytic_numeric[i][j], label='error ' + s[1] + ' ' + a[1])
+                    self.canvas_error.add(t, self.errors_analytic_numeric[i][j], label='err ' + s[1] + ' ' + a[1])
         self.canvas_error.plot()
 
     def update_canvas_solution(self):

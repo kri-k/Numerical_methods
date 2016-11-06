@@ -111,9 +111,9 @@ class MainWindow(QtGui.QMainWindow):
             T = w.doubleSpinBox_T.value()
             n = w.spinBox_nt.value()
             if T > 0 and n > 0:
-                w.label_stepx.setText(str(T / n)[:10])
+                w.label_stept.setText(str(T / n)[:10])
             else:
-                w.label_stepx.setText('Error')
+                w.label_stept.setText('Error')
 
         w.doubleSpinBox_T.valueChanged.connect(value_changed_step_t)
         w.spinBox_nt.valueChanged.connect(value_changed_step_t)
