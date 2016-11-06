@@ -138,26 +138,4 @@ def _o2p3(main_args, boundary_left_args, boundary_right_args, step_x, step_t, mi
 
 
 if __name__ == '__main__':
-    # from common.arithmetic_parser import FunctionFromStr
-    #
-    # main_args = (1, 2, -3, -2, lambda x, t: 0)
-    # boundary_left_args = (0, 1, lambda t: 0)
-    # boundary_right_args = (0, 1, lambda t: 0)
-    # initial_args = (FunctionFromStr('0'),
-    #                 FunctionFromStr('2 * exp(-x) * sin(x)'))
-    # initial_args[0].set_args_name('x')
-    # initial_args[1].set_args_name('x')
-    # min_x = 0
-    # max_x = 3.14
-    # max_t = 1
-    # step_x = 0.314
-    # step_t = 0.1
-    # u1 = explicit_fd(main_args,
-    #                  boundary_left_args,
-    #                  boundary_right_args,
-    #                  initial_args,
-    #                  min_x, max_x,
-    #                  max_t,
-    #                  step_x, step_t)
-    # print(*u1, sep='\n')
     pass

@@ -305,3 +305,6 @@ class MainWindow(QtGui.QMainWindow):
             self.canvas_solution.add(x, self.analytic_solution[cur_t], label='analytic', linestyle='--')
         self.canvas_solution.plot()
         w.label_t.setText(str(cur_t * self.step_t)[:5])
+
+if __name__ == '__main__':
+    pass

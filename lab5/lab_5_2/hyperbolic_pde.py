@@ -62,3 +62,6 @@ class HyperbolicPDE:
             return self.solve_explicit_method(step_x, step_t, boundary_approximation_func, initial_approximation_order)
         if scheme_type == 'implicit':
             return self.solve_implicit_method(step_x, step_t, boundary_approximation_func, initial_approximation_order)
+
+if __name__ == '__main__':
+    pass
