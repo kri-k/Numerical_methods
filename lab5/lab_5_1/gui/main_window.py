@@ -219,17 +219,10 @@ class MainWindow(QtGui.QMainWindow):
             for j, a in enumerate(self.app_order_names):
                 solve_progress_dialog.setValue(i * len(self.scheme_names) + j)
                 solve_progress_dialog.setLabelText('Solving...\n{} {}'.format(s, a))
-                if i == 2:
-                    self.solutions[i][j] = solver.solve(self.step_x,
-                                                        self.step_t,
-                                                        s,
-                                                        a,
-                                                        self.solutions[0][j], self.solutions[1][j])
-                else:
-                    self.solutions[i][j] = solver.solve(step_x=self.step_x,
-                                                        step_t=self.step_t,
-                                                        scheme_type=s,
-                                                        boundary_approximation_func=a)
+                self.solutions[i][j] = solver.solve(step_x=self.step_x,
+                                                    step_t=self.step_t,
+                                                    scheme_type=s,
+                                                    boundary_approximation_func=a)
                 if solve_progress_dialog.wasCanceled():
                     break
             if solve_progress_dialog.wasCanceled():
@@ -276,3 +269,6 @@ class MainWindow(QtGui.QMainWindow):
             self.canvas_solution.add(x, self.analytic_solution[k], label='analytic', linestyle='--')
         self.canvas_solution.plot()
         w.label_t.setText(str(k * self.step_t)[:5])
+
+if __name__ == '__main__':
+    pass

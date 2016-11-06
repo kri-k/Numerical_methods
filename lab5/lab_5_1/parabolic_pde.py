@@ -55,7 +55,7 @@ class ParabolicPDE:
                            step_x, step_t,
                            boundary_approximation_func)
 
-    def solve_crank_nicolson_method(self, step_x, step_t, boundary_approximation_func, *args):
+    def solve_crank_nicolson_method(self, step_x, step_t, boundary_approximation_func):
         return crank_nicolson_fd(self.main_args,
                                  self.boundary_left_args,
                                  self.boundary_right_args,
@@ -63,13 +63,15 @@ class ParabolicPDE:
                                  self.min_x, self.max_x,
                                  self.max_t,
                                  step_x, step_t,
-                                 boundary_approximation_func,
-                                 *args)
+                                 boundary_approximation_func)
 
-    def solve(self, step_x, step_t, scheme_type, boundary_approximation_func, *args):
+    def solve(self, step_x, step_t, scheme_type, boundary_approximation_func):
         if scheme_type == 'explicit':
             return self.solve_explicit_method(step_x, step_t, boundary_approximation_func)
         if scheme_type == 'implicit':
             return self.solve_implicit_method(step_x, step_t, boundary_approximation_func)
         if scheme_type == 'crank-nicolson':
-            return self.solve_crank_nicolson_method(step_x, step_t, boundary_approximation_func, *args)
+            return self.solve_crank_nicolson_method(step_x, step_t, boundary_approximation_func)
+
+if __name__ == '__main__':
+    pass
