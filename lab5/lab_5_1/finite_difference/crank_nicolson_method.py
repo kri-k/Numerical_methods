@@ -51,8 +51,8 @@ def crank_nicolson_fd(main_args,
             v[x] = (u[t - 1][x - 1] * X +
                     u[t - 1][x] * Y +
                     u[t - 1][x + 1] * Z +
-                    (theta - 1) * f(x * step_x, t * step_t) -
-                    theta * f(x * step_x, (t - 1) * step_t))
+                    (theta - 1) * f(min_x + x * step_x, t * step_t) -
+                    theta * f(min_x + x * step_x, (t - 1) * step_t))
         complete_vector(v, t * step_t, matrix_u_t, u[t-1][0], u[t-1][-1])
         u[t] = list(TDMA(mtrx=matrix_u_t, vec=v).solve())
 
