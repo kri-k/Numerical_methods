@@ -185,7 +185,7 @@
                 <double>1000000.000000000000000</double>
                </property>
                <property name="value">
-                <double>1.570796000000000</double>
+                <double>3.141592000000000</double>
                </property>
               </widget>
              </item>
@@ -305,7 +305,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>exp(-2 * t)</string>
+                <string>exp(-2 * t) * (cos(t) + sin(t))</string>
                </property>
               </widget>
              </item>
@@ -331,7 +331,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>exp(-2 * t)</string>
+                <string>-exp(-2 * t) * (cos(t) + sin(t))</string>
                </property>
               </widget>
              </item>
@@ -610,7 +610,7 @@
               <double>1.000000000000000</double>
              </property>
              <property name="value">
-              <double>0.000000000000000</double>
+              <double>1.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -706,6 +706,9 @@
              <property name="maximum">
               <double>1000000.000000000000000</double>
              </property>
+             <property name="value">
+              <double>1.000000000000000</double>
+             </property>
             </widget>
            </item>
            <item row="0" column="3">
@@ -757,6 +760,9 @@
              </property>
              <property name="maximum">
               <double>1000000.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>1.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -1108,7 +1114,7 @@
              <item row="1" column="1">
               <widget class="QLineEdit" name="lineEdit_analytic_solution">
                <property name="text">
-                <string>exp(-2 * t) * sin(x)</string>
+                <string>exp(-2 * t) * sin(x + t)</string>
                </property>
               </widget>
              </item>

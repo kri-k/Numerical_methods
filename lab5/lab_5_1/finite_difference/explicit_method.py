@@ -59,17 +59,17 @@ def _o2p2(main_args, boundary_left_args, boundary_right_args, step_x, step_t, mi
     def f_0(*args):
         t, u_1, _, u_0_prev_t = args[:4]
         a2 = 2 * a
-        y = 1 + b * step_x / a2
-        tmp = a2 * step_x * y * phi_0(t) - a2 * alpha * u_1 - alpha * step_x ** 2 * (u_0_prev_t / step_t + f(min_x, t))
-        tmp /= alpha * step_x ** 2 * (c * step_t - 1) / step_t + a2 * (step_x * beta * y - alpha)
+        tmp = (a2 - b * step_x) * phi_0(t) - (a2 * alpha / step_x) * u_1 - \
+              (alpha * step_x / step_t) * u_0_prev_t - alpha * step_x * f(min_x, t)
+        tmp /= alpha * (c * step_x - a2 / step_x - step_x / step_t) + beta * (a2 - b * step_x)
         return tmp
 
     def f_1(*args):
         t, u_n1, _, u_n_prev_t = args[:4]
         a2 = 2 * a
-        y = 1 + b * step_x / a2
-        tmp = phi_1(t) + gamma * (a2 * u_n1 + step_x ** 2 * (u_n_prev_t / step_t + f(max_x, t)))
-        tmp /= gamma * (a2 + step_x ** 2 / step_t - c * step_x ** 2) + delta
+        tmp = (a2 + b * step_x) * phi_1(t) + (a2 * gamma / step_x) * u_n1 + \
+              (gamma * step_x / step_t) * u_n_prev_t + gamma * step_x * f(max_x, t)
+        tmp /= gamma * (a2 / step_x + step_x / step_t - c * step_x) + delta * (a2 + b * step_x)
         return tmp
 
     return f_0, f_1
