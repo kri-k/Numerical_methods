@@ -161,8 +161,8 @@ def _o2p3(main_args, boundary_left_args, boundary_right_args, step_x, step_t, mi
         k = (gamma / (2 * step_x)) / m[-2][0]
         k1 = -2 * gamma / step_x
         k2 = 3 * gamma / (2 * step_x) + delta
-        m[-1][0] = k1 - k * m[-2][0]
-        m[-1][1] = k2 - k * m[-2][1]
+        m[-1][0] = k1 - k * m[-2][1]
+        m[-1][1] = k2 - k * m[-2][2]
 
     def complete_vector(*args):
         v, t, m = args[:3]

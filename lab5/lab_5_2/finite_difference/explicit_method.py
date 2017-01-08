@@ -35,16 +35,26 @@ def explicit_fd(main_args,
         u[0][x] = psi_1(min_x + x * step_x)
         u[1][x] = init_second_layer_func(min_x + x * step_x, u[0][x])
 
-    A = (2 - e * step_t) / (2 * step_t ** 2)
-    B = ((a / step_x) ** 2 - b / (2 * step_x)) / A
-    C = (2 / step_t ** 2 + c - 2 * (a / step_x) ** 2) / A
-    D = ((a / step_x) ** 2 + b / (2 * step_x)) / A
-    E = (-2 - step_t * e) / (2 - step_t * e)
+    # A = (2 - e * step_t) / (2 * step_t ** 2)
+    # B = ((a / step_x) ** 2 - b / (2 * step_x)) / A
+    # C = (2 / step_t ** 2 + c - 2 * (a / step_x) ** 2) / A
+    # D = ((a / step_x) ** 2 + b / (2 * step_x)) / A
+    # E = (-2 - step_t * e) / (2 - step_t * e)
+    A = (a / step_x) ** 2 - b / (2 * step_x)
+    B = 2 / step_t ** 2 - 2 * (a / step_x) ** 2 + c
+    C = (a / step_x) ** 2 + b / (2 * step_x)
+    D = - step_t ** -2 - e / (2 * step_t)
 
     for t in range(2, m):
         for x in range(1, n - 1):
-            u[t][x] = (B * u[t - 1][x - 1] + C * u[t - 1][x] + D * u[t - 1][x + 1] + E * u[t - 2][x] +
+            # u[t][x] = (B * u[t - 1][x - 1] + C * u[t - 1][x] + D * u[t - 1][x + 1] + E * u[t - 2][x] +
+            #            f(min_x + x * step_x, (t - 1) * step_t))
+            u[t][x] = (u[t - 1][x - 1] * A +
+                       u[t - 1][x] * B +
+                       u[t - 1][x + 1] * C +
+                       u[t - 2][x] * D +
                        f(min_x + x * step_x, (t - 1) * step_t))
+            u[t][x] /= step_t ** -2 - e / (2 * step_t)
         u[t][0] = f0(t * step_t, u[t][1], u[t][2], u[t - 1][0], u[t - 2][0])
         u[t][n - 1] = f1(t * step_t, u[t][n - 2], u[t][n - 3], u[t - 1][n - 1], u[t - 2][n - 1])
 
@@ -61,9 +71,12 @@ def _get_init_second_layer_func(approximation_order, main_args, initial_args, st
             return step_t * psi_2(x) + prev_u
     else:
         def _f(x, prev_u):
-            return (prev_u * (1 + step_t ** 2 * c / 2) +
-                    psi_2(x) * (step_t + step_t ** 2 * e / 2) +
-                    step_t ** 2 / 2 * (a ** 2 * psi_1_2(x) + b * psi_1_1(x) + f(x, 0)))
+            # return (prev_u * (1 + step_t ** 2 * c / 2) +
+            #         psi_2(x) * (step_t + step_t ** 2 * e / 2) +
+            #         step_t ** 2 / 2 * (a ** 2 * psi_1_2(x) + b * psi_1_1(x) + f(x, 0)))
+            return (prev_u +
+                    step_t * psi_2(x) +
+                    step_t ** 2 / 2 * (a ** 2 * psi_1_2(x) + b * psi_1_1(x) + c * prev_u + e * psi_2(x) + f(x, 0)))
     return _f
 
 

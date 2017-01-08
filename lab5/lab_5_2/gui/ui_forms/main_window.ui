@@ -201,7 +201,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>0</string>
+                <string>sin(x)</string>
                </property>
               </widget>
              </item>
@@ -227,7 +227,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>0</string>
+                <string>-cos(x) * exp(-t)</string>
                </property>
               </widget>
              </item>
@@ -253,7 +253,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>0</string>
+                <string>exp(-t)</string>
                </property>
               </widget>
              </item>
@@ -279,7 +279,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>0</string>
+                <string>-exp(-t)</string>
                </property>
               </widget>
              </item>
@@ -305,7 +305,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>2 * exp(-x) * sin(x)</string>
+                <string>-sin(x)</string>
                </property>
               </widget>
              </item>
@@ -584,7 +584,7 @@
               <double>1.000000000000000</double>
              </property>
              <property name="value">
-              <double>0.000000000000000</double>
+              <double>1.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -615,7 +615,7 @@
               <double>1000000.000000000000000</double>
              </property>
              <property name="value">
-              <double>1.000000000000000</double>
+              <double>0.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -650,7 +650,7 @@
               <double>1000000.000000000000000</double>
              </property>
              <property name="value">
-              <double>0.000000000000000</double>
+              <double>1.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -681,7 +681,7 @@
               <double>1000000.000000000000000</double>
              </property>
              <property name="value">
-              <double>1.000000000000000</double>
+              <double>0.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -736,7 +736,7 @@
               <double>1000000.000000000000000</double>
              </property>
              <property name="value">
-              <double>2.000000000000000</double>
+              <double>1.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -798,7 +798,7 @@
               <double>1000000.000000000000000</double>
              </property>
              <property name="value">
-              <double>-3.000000000000000</double>
+              <double>-1.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -824,7 +824,7 @@
               <double>1000000.000000000000000</double>
              </property>
              <property name="value">
-              <double>-2.000000000000000</double>
+              <double>-3.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -1066,7 +1066,7 @@
                <item>
                 <widget class="QLineEdit" name="lineEdit_analytic_solution">
                  <property name="text">
-                  <string>exp(-t - x) * sin(x) * sin(2 * t)</string>
+                  <string>exp(-t) * sin(x)</string>
                  </property>
                 </widget>
                </item>
