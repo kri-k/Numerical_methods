@@ -1,5 +1,5 @@
 from libs.tridiagonal_matrix_algorithm import *
-from libs.сauchy_problem import CauchyProblem
+from libs.cauchy_problem import CauchyProblem
 
 __DEBUG = 0
 
